@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/build",
+  "command": "/usr/local/bin/g++-12 -I/usr/local/include -isystem /usr/local/Cellar/opencv/4.7.0_4/include/opencv4 -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++17 -o CMakeFiles/Rasterizer.dir/main.cpp.o -c /Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/main.cpp",
+  "file": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/main.cpp"
+},
+{
+  "directory": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/build",
+  "command": "/usr/local/bin/g++-12 -I/usr/local/include -isystem /usr/local/Cellar/opencv/4.7.0_4/include/opencv4 -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++17 -o CMakeFiles/Rasterizer.dir/rasterizer.cpp.o -c /Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/rasterizer.cpp",
+  "file": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/rasterizer.cpp"
+},
+{
+  "directory": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/build",
+  "command": "/usr/local/bin/g++-12 -I/usr/local/include -isystem /usr/local/Cellar/opencv/4.7.0_4/include/opencv4 -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -std=gnu++17 -o CMakeFiles/Rasterizer.dir/Triangle.cpp.o -c /Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/Triangle.cpp",
+  "file": "/Users/liuxiaoli/Desktop/Peter/games101/Assignment1/代码框架/Triangle.cpp"
+}
+]
