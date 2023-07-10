@@ -212,12 +212,12 @@ inline Intersection Triangle::getIntersection(Ray ray)
 {
     Intersection inter;
 
-    if (dotProduct(ray.direction, normal) > 0)
+    if (dotProduct(ray.direction, normal) > 0)   // 与三角形的法向量同向，则无交点
         return inter;
     double u, v, t_tmp = 0;
     Vector3f pvec = crossProduct(ray.direction, e2);
     double det = dotProduct(e1, pvec);
-    if (fabs(det) < EPSILON)
+    if (fabs(det) < EPSILON)                          //计算与某一边的cross，结果于另一边做dot，若结果过小，说明与三角形近乎平行
         return inter;
 
     double det_inv = 1. / det;
@@ -232,9 +232,14 @@ inline Intersection Triangle::getIntersection(Ray ray)
     t_tmp = dotProduct(e2, qvec) * det_inv;
 
     // TODO find ray triangle intersection
-
-
-
+    if(t_tmp<0)
+        return inter;                   //在ray原点的反向
+    inter.distance=t_tmp;
+    inter.happened=true;
+    inter.normal= this->normal;
+    inter.coords=ray(t_tmp);
+    inter.obj=this;
+    inter.m=this->m;
 
     return inter;
 }

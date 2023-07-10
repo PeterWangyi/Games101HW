@@ -30,10 +30,23 @@ void naive_bezier(const std::vector<cv::Point2f> &points, cv::Mat &window)
     }
 }
 
+cv::Point2f lerp_v2f(const cv::Point2f& a, const cv::Point2f& b, float t)
+{
+    return a + (b - a) * t;
+}
+
 cv::Point2f recursive_bezier(const std::vector<cv::Point2f> &control_points, float t) 
 {
     // TODO: Implement de Casteljau's algorithm
-    return cv::Point2f();
+    if (control_points.size() == 1)
+        return control_points[0];
+
+    std::vector<cv::Point2f> lerp_points;
+    for (size_t i = 1; i<control_points.size(); i++)
+    {
+        lerp_points.push_back(lerp_v2f(control_points[i - 1], control_points[i], t));
+    }
+    return recursive_bezier(lerp_points, t);
 
 }
 
@@ -41,7 +54,41 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window)
 {
     // TODO: Iterate through all t = 0 to t = 1 with small steps, and call de Casteljau's 
     // recursive Bezier algorithm.
+    // For each point returned by the algorithm, draw a red pixel on the image.
+    float step = 0.001f;
+    for (float t = 0.0; t <= 1.0; t += step)
+    {
+        auto point = recursive_bezier(control_points, t);
+        window.at<cv::Vec3b>(point.y, point.x)[2] = 255;
+    }
+}
 
+float get_distance(const cv::Point2f &point1,const cv::Point2f &point2)
+{
+    return std::pow(std::pow(std::abs(point2.x-point1.x),2)+std::pow(std::abs(point2.y-point1.y),2),0.5f);
+}
+
+void bezier_with_antialiasing(const std::vector<cv::Point2f> &control_points, cv::Mat &window)
+{
+    // TODO: Iterate through all t = 0 to t = 1 with small steps, and call de Casteljau's
+    // recursive Bezier algorithm.
+    for (float i = 0; i < 1; i += 0.001f)
+    {
+        auto point = recursive_bezier(control_points,i);
+
+        float minx=std::floor(point.x), miny=std::floor(point.y);
+        //calculate the four points's color arount the input point
+        for(int k = 0; k <= 1; k++)
+        {
+            for(int j = 0; j <= 1; j++)
+            {
+                float distance=get_distance(cv::Point2f(miny + j,minx + k),point);
+                std::cout<<distance<<std::endl;
+                float color = std::min(255.0f * distance, 255.0f);
+                window.at<cv::Vec3b>(miny + j, minx + k)[2] = color;
+            }
+        }
+    }
 }
 
 int main() 
@@ -62,8 +109,9 @@ int main()
 
         if (control_points.size() == 4) 
         {
-            naive_bezier(control_points, window);
-            //   bezier(control_points, window);
+//            naive_bezier(control_points, window);
+//            bezier(control_points, window);
+            bezier_with_antialiasing(control_points,window);
 
             cv::imshow("Bezier Curve", window);
             cv::imwrite("my_bezier_curve.png", window);
