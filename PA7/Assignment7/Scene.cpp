@@ -61,4 +61,48 @@ bool Scene::trace(
 Vector3f Scene::castRay(const Ray &ray, int depth) const
 {
     // TO DO Implement Path Tracing Algorithm here
+    if (depth > 2)
+        return Vector3f();
+    Intersection interToScene = Scene::intersect(ray);
+    if (!interToScene.happened){
+        return Vector3f();
+    }
+    // Light source itself
+    if (interToScene.m->hasEmission()){
+        return interToScene.m->getEmission();
+    }
+
+    Vector3f L_dir = {0, 0, 0}, L_indir = {0, 0, 0};
+
+    //Calculate the Intersection from point to light in order to calculate direct Color
+    Intersection LightPos;
+    float lightpdf;
+    sampleLight(LightPos, lightpdf);
+    Vector3f LightDir = LightPos.coords - interToScene.coords;
+    float dis = dotProduct(LightDir, LightDir);
+    Vector3f LightDirNormal = LightDir.normalized();
+    Ray rayToLight(interToScene.coords, LightDirNormal);
+    Intersection interToLight = Scene::intersect(rayToLight);
+    auto f_r = interToScene.m->eval(ray.direction, LightDirNormal, interToScene.normal);
+    if (interToLight.distance - LightDir.norm() > -0.005){
+        L_dir = LightPos.emit * f_r * dotProduct(LightDirNormal, interToScene.normal) * dotProduct(-LightDirNormal, LightPos.normal) / dis / lightpdf;
+    }
+
+    //Calculate the Intersection from point to point in order to calculate indirect Color
+    if(get_random_float()>RussianRoulette)
+        return L_dir;
+
+    Vector3f wi =interToScene.m->sample(ray.direction,interToScene.normal).normalized();
+    //Ray indirRay = Ray(intersToScene.coords, wi);
+    Ray indirRay(interToScene.coords, wi);
+    Intersection intersToPoint = Scene::intersect(indirRay);
+    if( intersToPoint.happened && !intersToPoint.m->hasEmission())
+    {
+        float pdf=interToScene.m->pdf(ray.direction,wi,interToScene.normal);
+        L_indir= castRay(indirRay,depth+1) * interToScene.m->eval(ray.direction,wi,interToScene.normal) * dotProduct(wi,interToScene.normal) /(RussianRoulette/pdf);
+    }
+
+    return L_dir+ L_indir ;
+
+
 }
